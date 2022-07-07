@@ -137,7 +137,7 @@ export async function strategy(
       const parsedSum = parseFloat(
         formatUnits(score[address], OCEAN_ERC20_DECIMALS)
       );
-      return_score[address] = parsedSum;
+      return_score[address] = parsedSum * 2; // This is to account for the BAL pools which are 50/50 OCEAN/DT.
 
       // console.log(`Score for address: ${address} is: ${return_score[address]}`);
     });
