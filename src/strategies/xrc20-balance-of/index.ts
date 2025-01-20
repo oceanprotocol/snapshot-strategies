@@ -1,15 +1,15 @@
-import fetch from 'cross-fetch';
 import { strategy as erc20BalanceStrategy } from '../erc20-balance-of';
+import { customFetch } from '../../utils';
 
 interface ApiReturn {
   balance: string[];
 }
 
-export const author = 'iotex';
-export const version = '0.0.1';
+export const author = 'iotexproject';
+export const version = '0.0.2';
 
-const testNetUrl = 'https://testnet.iotexscout.io/apiproxy';
-const mainNetUrl = 'https://iotexscout.io/apiproxy';
+const testNetUrl = 'https://analyser-api.testnet.iotex.io';
+const mainNetUrl = 'https://analyser-api.iotex.io';
 
 function getUrl(network) {
   return network == 4689 ? mainNetUrl : testNetUrl;
@@ -35,8 +35,8 @@ export async function strategy(
     );
 
   const apiUrl = getUrl(network);
-  const response = await fetch(
-    `${apiUrl}/api.AccountService.GetErc20TokenBalanceByHeight`,
+  const response = await customFetch(
+    `${apiUrl}/api.AccountService.Erc20TokenBalanceByHeight`,
     {
       method: 'POST',
       headers: {

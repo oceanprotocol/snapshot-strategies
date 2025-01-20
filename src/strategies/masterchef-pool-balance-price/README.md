@@ -6,7 +6,7 @@ This strategy gets the balance or price of any combination of tokens for a pool 
 
 It allows to get the balance or price of any of the pool pair tokens separately or the combination of both.
 
-Optionally, an anti-whale measure can be applied to reduce the impact of big wallets in the the resulting value.
+Optionally, an anti-whale measure can be applied to reduce the impact of big wallets in the resulting value.
 
 The price is sourced from CoinGecko.
 
@@ -14,7 +14,7 @@ The price is sourced from CoinGecko.
 
 - **chefAddress:** masterchef contract address
   
-- **pid:** mastechef pool id (starting with zero)
+- **pid:** masterchef pool id (starting with zero)
 
 - **uniPairAddress:** Address of a uniswap pair (or a sushi pair or any other with the same interface)
   - If the uniPairAddress option is provided, converts staked LP token balance to base token balance (based on the pair total supply and base token reserve)
@@ -55,7 +55,7 @@ The price is sourced from CoinGecko.
 - **log:** Boolean flag to enable or disable logging to the console (used for debugging purposes during development)
 
 - **antiWhale.enable:** Boolean flag to apply an anti-whale measure reducing the effect on the voting power as the token amount increases.
-  - if enabled will apply the the following to the result:
+  - if enabled will apply the following to the result:
   
       ```none
       If result > antiWhale.threshold

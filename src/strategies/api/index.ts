@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address';
-import fetch from 'cross-fetch';
 import { formatUnits } from '@ethersproject/units';
+import { customFetch } from '../../utils';
 
 export const author = 'ganzai-san';
 export const version = '0.1.2';
@@ -13,6 +13,10 @@ const isIPFS = (apiURL) => {
   );
 };
 
+const isStaticAPI = (apiURL: string): boolean => {
+  return apiURL.endsWith('.json');
+};
+
 export async function strategy(
   space,
   network,
@@ -21,27 +25,38 @@ export async function strategy(
   options,
   snapshot
 ) {
-  let api_url = options.api + '/' + options.strategy;
-  if (!isIPFS(api_url)) {
+  const api: string = options.api;
+  const strategy: string = options.strategy || '';
+  const additionalParameters: string = options.additionalParameters || '';
+  const staticFile: boolean = options.staticFile || false;
+
+  let api_url = api + '/' + strategy;
+  if (!isIPFS(api_url) && !isStaticAPI(api_url) && !staticFile) {
     api_url += '?network=' + network;
     api_url += '&snapshot=' + snapshot;
     api_url += '&addresses=' + addresses.join(',');
   }
-  if (options.additionalParameters)
-    api_url += '&' + options.additionalParameters;
+  if (additionalParameters) api_url += '&' + additionalParameters;
 
-  const response = await fetch(api_url, {
+  const response = await customFetch(api_url, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     }
   });
+
   const data = await response.json();
+
   return Object.fromEntries(
     data.score.map((value) => [
       getAddress(value.address),
-      parseFloat(formatUnits(value.score.toString(), options.decimals))
+      parseFloat(
+        formatUnits(
+          value.score.toString(),
+          options.hasOwnProperty('decimals') ? options.decimals : 0
+        )
+      )
     ])
   );
 }

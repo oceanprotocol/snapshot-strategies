@@ -1,5 +1,4 @@
-import fetch from 'cross-fetch';
-import { subgraphRequest } from '../../utils';
+import { subgraphRequest, customFetch } from '../../utils';
 
 export const author = 'alberthaotan';
 export const version = '0.3.2';
@@ -118,7 +117,7 @@ export async function strategy(
     })
   };
 
-  const graphqlPromise = fetch(Networks[network].graphql, graphqlParams);
+  const graphqlPromise = customFetch(Networks[network].graphql, graphqlParams);
   const subgraphPromise = subgraphRequest(
     options.params.subgraph
       ? options.params.subgraph
@@ -136,8 +135,8 @@ export async function strategy(
   );
 
   const ownerToScore: OwnerToScore = {};
-  const ownersWithNfts: OwnerWithNfts = graphqlData.data.allNFTsByOwnersCoresAndChain.reduce(
-    (map, item) => {
+  const ownersWithNfts: OwnerWithNfts =
+    graphqlData.data.allNFTsByOwnersCoresAndChain.reduce((map, item) => {
       map[item.owner.toLowerCase()] = item.nfts.reduce((m, i) => {
         if (!options.params.blacklistNFTID?.includes(i.id)) {
           m[i.nftCore.contractAddress.toLowerCase() + '-' + i.id] = i.name;
@@ -145,9 +144,7 @@ export async function strategy(
         return m;
       }, {});
       return map;
-    },
-    {}
-  );
+    }, {});
 
   const subgraphOwnersWithNfts: OwnerWithNfts = {};
   subgraphData.nftContracts.forEach((nftContract) => {

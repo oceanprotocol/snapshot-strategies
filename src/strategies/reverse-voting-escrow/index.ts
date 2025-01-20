@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { Multicaller } from '../../utils';
-import fetch from 'cross-fetch';
+
+import { Multicaller, customFetch } from '../../utils';
 import { formatUnits } from '@ethersproject/units';
 
 export const author = 'nascentxyz';
@@ -43,10 +43,8 @@ export async function strategy(
       walletAddress
     ]);
   }
-  const walletToClubBalance: Record<
-    string,
-    BigNumber
-  > = await callWalletToClubBalance.execute();
+  const walletToClubBalance: Record<string, BigNumber> =
+    await callWalletToClubBalance.execute();
 
   for (const [walletID, balance] of Object.entries(walletToClubBalance)) {
     const address = walletID.split('-')[0];
@@ -64,7 +62,7 @@ export async function strategy(
   // [GET] all-claim-data/:account: returns the claim data for a specific account from all the cohorts it is in
   // [GET] all-data: returns all claim data
 
-  const allData = await fetch(`https://club.agora.space/api/all-data`);
+  const allData = await customFetch(`https://club.agora.space/api/all-data`);
   const allDataJSON = await allData.json();
 
   // ** Claimed $CLUB tokens ** //
@@ -114,10 +112,8 @@ export async function strategy(
     // ** Execute the vested multicall ** //
     try {
       // This should return a mapping of wallet addresses to vested amounts
-      const tempWalletVestedAmounts: Record<
-        string,
-        BigNumber
-      > = await getWalletToVestedAmount.execute();
+      const tempWalletVestedAmounts: Record<string, BigNumber> =
+        await getWalletToVestedAmount.execute();
       walletToVestedAmount = Object.assign(
         walletToVestedAmount,
         tempWalletVestedAmounts
@@ -128,10 +124,8 @@ export async function strategy(
   }
 
   // ** Execute the claimed multicall ** //
-  const walletToClaimedAmount: Record<
-    string,
-    BigNumber
-  > = await getWalletToClaimedAmount.execute();
+  const walletToClaimedAmount: Record<string, BigNumber> =
+    await getWalletToClaimedAmount.execute();
 
   // ** Map address to its full amount of claimable tokens ** //
   const listOfFullAmounts = Object.entries(allDataJSON)
